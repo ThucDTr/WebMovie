@@ -1,24 +1,59 @@
-import logo from './logo.svg';
-import './App.css';
+import "./App.scss";
+import { BrowserRouter, Redirect, Route, Switch } from "react-router-dom";
+
+import Header from "./components/header/Header";
+import Footer from "./components/footer/Footer";
+import Home from "./pages/Home";
+import Login from "./pages/Login";
+import Detail from "./pages/Detail";
+import Catalog from "./pages/Catalog";
+import GenreMovies from "./pages/GenreMovies";
+import Watch from "./pages/Watch";
+import "swiper/swiper.min.css";
+
+
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <BrowserRouter>
+      <Route
+        render={() => {
+          return localStorage.getItem("token") ? (
+            <Redirect to="/" />
+          ) : (
+            <Login />
+          );
+        }}
+      />
+
+      <Route
+        //login route
+
+        render={(props) => {
+          return localStorage.getItem("token") ?
+            <>
+              <Header {...props} />
+
+              <Switch>
+                <Route exact path="/" component={Home} />
+                <Route
+                  path={`/movie/search/:keyword`}
+                  component={Catalog}
+                />
+                <Route path="/category/:name/:id" component={GenreMovies} />
+                <Route path="/movie/:id" component={Detail} />
+                <Route path="/movie" component={Catalog} />
+                <Route path="/watch/:link" component={Watch} />
+              </Switch>
+
+              <Footer />
+            </>
+            :
+            <Redirect to="/" />
+        }}
+      />
+
+    </BrowserRouter>
   );
 }
 
